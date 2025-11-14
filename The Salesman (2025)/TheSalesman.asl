@@ -36,8 +36,9 @@ update
 {
     vars.Uhara.Update();
 
-    // Update ActiveScene so we can have an old variable to compare against in split
+    // Update ActiveScene/LoadingScene so we can have an old variable to compare against in split
 	current.ActiveScene = vars.Utils.GetActiveSceneName() ?? current.ActiveScene;
+	current.LoadingScene = vars.Utils.GetLoadingSceneName() ?? current.LoadingScene;
 }
 
 start
@@ -64,4 +65,16 @@ split
     // MERCY Ending Split
     if (current.ActiveScene == "Day 7" && current.DialogueNode == "Day_7_No" && current.funcSetAlpha != old.funcSetAlpha)
         return true;
+}
+
+isLoading
+{
+    // Generic loading detection
+	return current.ActiveScene != current.LoadingScene;
+}
+
+reset
+{
+    // Reset when returning to the Main Menu, this can be disabled if desired
+	return current.ActiveScene == "Main Menu" && current.ActiveScene != old.ActiveScene;
 }
