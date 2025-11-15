@@ -2,7 +2,7 @@ state("FNaF_World"){}
 
 startup
 {
-    Assembly.Load(File.ReadAllBytes("Components/uharaFNaFWorld")).CreateInstance("Main");
+    Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
     //vars.Uhara.EnableDebug();
     vars.Watchers = new List<string>();
 
