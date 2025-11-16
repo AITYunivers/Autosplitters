@@ -14,6 +14,9 @@ init
 	vars.Utils = vars.Uhara.CreateTool("Unity", "Utils");
     vars.Instance = vars.Uhara.CreateTool("Unity", "DotNet", "Instance");
 
+    // List meant for preventing double splits
+    vars.DaysSplit = new List<int>();
+
     // Variable Initialization to avoid null references
     current.ActiveScene = "";
     current.funcSetAlpha = null;
@@ -43,6 +46,9 @@ update
 
 start
 {
+    if (vars.DaysSplit.Count > 0)
+        vars.DaysSplit.Clear();
+
     // Start if the player gains control at the start of Day 1
     return current.CanPlayerMove && !old.CanPlayerMove && old.DialogueNode == "Day_1";
 }
@@ -57,8 +63,11 @@ split
         {
             // Only split if it's Day 2-7
             int day = int.Parse(current.ActiveScene.Split(' ')[1]);
-            if (day > 1 && day <= 7)
+            if (day > 1 && day <= 7 && !vars.DaysSplit.Contains(day))
+            {
+                vars.DaysSplit.Add(day);
                 return true;
+            }
         }
     }
 
