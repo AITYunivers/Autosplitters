@@ -1,0 +1,110 @@
+{
+    "jr-s-final-release-v.1.0":
+    {
+        "Menu Screen": 5,
+        "6-AM": 15,
+        "6-AM SR's": 16,
+        "Boss 6AM": 22,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 32,
+        "TitleBtnClicked": "Active 14",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jr-s-v1-1-1":
+    {
+        "Menu Screen": 5,
+        "6-AM": 14,
+        "6-AM SR's": 15,
+        "Boss 6AM": 21,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 31,
+        "TitleBtnClicked": "Active 14",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jr-s-v1-2-2":
+    {
+        "Menu Screen": 5,
+        "6-AM": 14,
+        "6-AM SR's": 15,
+        "Boss 6AM": 21,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 31,
+        "TitleBtnClicked": "Active 14",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jr-s-v1-2-3":
+    {
+        "Menu Screen": 5,
+        "6-AM": 14,
+        "6-AM SR's": 15,
+        "Boss 6AM": 21,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 31,
+        "TitleBtnClicked": "Active 14",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jr-s-v1-3-0":
+    {
+        "Menu Screen": 5,
+        "6-AM": 14,
+        "6-AM SR's": 15,
+        "Boss 6AM": 21,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 31,
+        "TitleBtnClicked": "MECHLUS",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jr-s-v1-3-1":
+    {
+        "Menu Screen": 5,
+        "6-AM": 14,
+        "6-AM SR's": 15,
+        "Boss 6AM": 21,
+        "Bonnie's Carrot Craze": 0,
+        "BCC Ending": 31,
+        "TitleBtnClicked": "MECHLUS",
+        "FailedToEraseSave": "Active 2",
+        "CarrotEnding": "Active 23"
+    },
+    "jrs-v1.4.0":
+    {
+        "Menu Screen": 3,
+        "6-AM": 17,
+        "6-AM SR's": 18,
+        "Boss 6AM": 22,
+        "Bonnie's Carrot Craze": 29,
+        "BCC Ending": 30,
+        "TitleBtnClicked": "Fade 2",
+        "FailedToEraseSave": "Continue",
+        "CarrotEnding": "Active 23"
+    },
+    "jrs-v1.4.1":
+    {
+        "Menu Screen": 3,
+        "6-AM": 17,
+        "6-AM SR's": 18,
+        "Boss 6AM": 22,
+        "Bonnie's Carrot Craze": 29,
+        "BCC Ending": 30,
+        "TitleBtnClicked": "Fade 2",
+        "FailedToEraseSave": "Continue",
+        "CarrotEnding": "Active 23"
+    },
+    "jrs-141":
+    {
+        "Menu Screen": 3,
+        "6-AM": 17,
+        "6-AM SR's": 18,
+        "Boss 6AM": 22,
+        "Bonnie's Carrot Craze": 29,
+        "BCC Ending": 30,
+        "TitleBtnClicked": "Fade 2",
+        "FailedToEraseSave": "Continue",
+        "CarrotEnding": "Active 23"
+    }
+}
