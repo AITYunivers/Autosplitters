@@ -4,7 +4,6 @@ startup
 {
     Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
     //vars.Uhara.EnableDebug();
-    vars.Watchers = new List<string>();
 
     settings.Add("Normal",   false, "Normal Mode Ending");
     settings.Add("Hard",     false, "Hard Mode Ending");
@@ -61,37 +60,30 @@ update
         return;
 
     vars.Uhara.Update();
+
+    if (current.Frame == old.Frame)
+        return;
+    
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
+    int oldOffsetFrame = old.Frame + vars.FrameOffset;
 
     // Create Dialogue watcher
-    if (vars.OffsetFrame == 20 || vars.OffsetFrame == 21 || vars.OffsetFrame == 22)
-    {
-        if (!vars.Watchers.Contains("Dialogue"))
-        {
-            vars.Instance.WatchCounter("Dialogue", "text");
-            vars.Watchers.Add("Dialogue");
-        }
-    }
+    if (vars.OffsetFrame >= 20 && vars.OffsetFrame <= 22)
+        vars.Instance.WatchCounter("Dialogue", "text");
+    else if (oldOffsetFrame >= 20 && oldOffsetFrame <= 22)
+        vars.Instance.RemoveOldWatcher("Dialogue");
 
     // Create Lost Dialogue watcher
     if (vars.OffsetFrame == 15)
-    {
-        if (!vars.Watchers.Contains("LostDialogue"))
-        {
-            vars.Instance.WatchCounter("LostDialogue", "chat");
-            vars.Watchers.Add("LostDialogue");
-        }
-    }
+        vars.Instance.WatchCounter("LostDialogue", "chat");
+    else if (oldOffsetFrame == 15)
+        vars.Instance.RemoveOldWatcher("LostDialogue");
 
     // Create New Character watcher
     if (vars.OffsetFrame == 43)
-    {
-        if (!vars.Watchers.Contains("NewCharacter"))
-        {
-            vars.Instance.WatchAnimation("NewCharacter", "Active");
-            vars.Watchers.Add("NewCharacter");
-        }
-    }
+        vars.Instance.WatchAnimation("NewCharacter", "Active");
+    else if (oldOffsetFrame == 43)
+        vars.Instance.RemoveOldWatcher("NewCharacter");
 }
 
 split
