@@ -1,4 +1,5 @@
-state("FNaF_World"){}
+state("FNaF_World"){} // Steam
+state("fnaf-world"){} // Gamejolt
 
 startup
 {
