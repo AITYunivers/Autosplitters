@@ -66,7 +66,7 @@ start
     }
 
     // Start if the player is allowed to doomscroll at the start of Day 7 (IL Only)
-    if (settings["iL"] && current.hasVid && !old.hasVid && current.DialogueNode == "Day_7")
+    if (settings["iL"] && current.CanPlayerScroll && !old.CanPlayerScroll && current.DialogueNode == "Day_7")
         return true;
 
     // Start if the player gains control at the start of Day 1
