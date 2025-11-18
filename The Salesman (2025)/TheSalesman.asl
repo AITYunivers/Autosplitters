@@ -61,7 +61,7 @@ start
             "Day_2", "Day_3", "Day_4", "Day_5", "Day_6"
         };
 
-        if (days.Contains(old.Dialogue))
+        if (days.Contains(current.DialogueNode))
             return true;
     }
 
