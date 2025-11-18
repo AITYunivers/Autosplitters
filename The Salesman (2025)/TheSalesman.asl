@@ -5,6 +5,7 @@ startup
     // Load Uhara and setup settings
 	Assembly.Load(File.ReadAllBytes("Components/uhara9")).CreateInstance("Main");
 	settings.Add("splitDays", true, "Split at the end each day");
+	settings.Add("iL", false, "Start at the beginning of a day (IL)");
 }
 
 init
@@ -23,6 +24,9 @@ init
 
     // Watch whether or not the player can move
     vars.Instance.Watch<bool>("CanPlayerMove", "FirstPersonController", "CanMove");
+
+    // Watch whether or not the player can scroll through the phone
+    vars.Instance.Watch<bool>("CanPlayerScroll", "PhoneScroll", "hasVid");
 
     // Watch current Dialogue Node name for the MERCY ending and the start split
     var ptr_dialogueNode = vars.Instance.Get("NarrativeHandler", "dialogueRunner", "dialogue", "vm", "state", "currentNodeName", "0x14");
@@ -48,6 +52,22 @@ start
 {
     if (vars.DaysSplit.Count > 0)
         vars.DaysSplit.Clear();
+
+    // Start if the player gains control at the start of Days 2-6 (IL Only)
+    if (settings["iL"] && current.CanPlayerMove && !old.CanPlayerMove)
+    {
+        List<string> days = new List<string>()
+        {
+            "Day_2", "Day_3", "Day_4", "Day_5", "Day_6"
+        };
+
+        if (days.Contains(old.Dialogue))
+            return true;
+    }
+
+    // Start if the player is allowed to doomscroll at the start of Day 7 (IL Only)
+    if (settings["iL"] && current.hasVid && !old.hasVid && current.DialogueNode == "Day_7")
+        return true;
 
     // Start if the player gains control at the start of Day 1
     return current.CanPlayerMove && !old.CanPlayerMove && old.DialogueNode == "Day_1";
