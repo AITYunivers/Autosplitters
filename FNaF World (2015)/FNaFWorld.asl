@@ -47,6 +47,11 @@ init
 
     // Compatibility for older versions without the warning frame
     vars.FrameOffset = current.FrameCount == 31 ? 1 : 0;
+    
+    // Initialize variables to avoid errors
+    current.NewCharacter = -1;
+    current.FoundNewCharacter = -1;
+    current.inMinigame = false;
 }
 
 start 
@@ -80,11 +85,17 @@ update
     else if (oldOffsetFrame == 15)
         vars.Instance.RemoveOldWatcher("LostDialogue");
 
-    // Create New Character watcher
-    if (vars.OffsetFrame == 43)
-        vars.Instance.WatchAnimation("NewCharacter", "Active");
-    else if (oldOffsetFrame == 43)
-        vars.Instance.RemoveOldWatcher("NewCharacter");
+    // Create Found New Character watcher
+    current.inMinigame = 
+        vars.OffsetFrame == 35 ||   // Foxy Fighters
+        vars.OffsetFrame == 38 ||   // Freddy in Space
+        vars.OffsetFrame == 41 ||   // Foxy.EXE
+        vars.OffsetFrame == 44;     // Chica's Magic Rainbow
+
+    if (current.inMinigame)
+        vars.Instance.WatchCounter("FoundNewCharacter", "found new");
+    else if (old.inMinigame)
+        vars.Instance.RemoveOldWatcher("FoundNewCharacter");
 }
 
 split
@@ -126,12 +137,7 @@ split
 
     // New Character Split
     if (settings["Chars"] && vars.OffsetFrame == 43 && old.Frame != current.Frame)
-    {
-        if (current.NewCharacter > 0)
-            current.NewCharacter -= 11; // Adjust to skip built-in animations
-        current.NewCharacter++; // Adjust to 1-based index
-        return settings["Char-" + current.NewCharacter.ToString()];
-    }
+        return settings["Char-" + (current.FoundNewCharacter - 40).ToString()];
 }
 
 isLoading
