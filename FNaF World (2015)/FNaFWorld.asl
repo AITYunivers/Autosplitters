@@ -7,10 +7,13 @@ startup
     //vars.Uhara.EnableDebug();
 
     settings.Add("Normal",   false, "Normal Mode Ending");
+        settings.Add("Normal-Instant", false, "Split when the Victory screen stops moving (Hard Mode Categories)", "Normal");
     settings.Add("Hard",     false, "Hard Mode Ending");
+        settings.Add("Hard-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)", "Hard");
     settings.Add("Fourth",   false, "Fourth Glitch Ending");
-        settings.Add("Fourth-Instant",  false, "Split as soon as you enter the Fourth Glitch (100% / 157%)", "Fourth");
+        settings.Add("Fourth-Instant", false, "Split as soon as you enter the Fourth Glitch (100% / 157%)", "Fourth");
     settings.Add("Chip",     false, "Chipper Ending");
+        settings.Add("Chip-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)", "Chip");
     settings.Add("Clock",    false, "Clock Ending");
     settings.Add("Universe", false, "Universe Ending");
     settings.Add("Rainbow",  false, "Rainbow Ending");
@@ -23,8 +26,11 @@ startup
         settings.Add("Char-6",  true, "Nightmarionne", "Chars");
         settings.Add("Char-7",  true, "Coffee", "Chars");
         settings.Add("Char-8",  true, "Purple Guy", "Chars");
-
-    refreshRate = 60;
+    settings.Add("ILs", true, "Specific timings for Individual Levels");
+        settings.Add("IL-1",  false, "Chica's Magic Rainbow", "ILs");
+        settings.Add("IL-2",  false, "Foxy Fighters", "ILs");
+        settings.Add("IL-3",  false, "Foxy.EXE", "ILs");
+        settings.Add("IL-4",  false, "Freddy in Space", "ILs");
 
     if (timer.CurrentTimingMethod == TimingMethod.RealTime)
     {        
@@ -51,11 +57,30 @@ init
     // Initialize variables to avoid errors
     current.NewCharacter = -1;
     current.FoundNewCharacter = -1;
+    current.VictorySpeed = -1;
+    current.VictoryStage = 0;
+    current.VictoryCount = 0;
     current.inMinigame = false;
 }
 
 start 
 {  
+    // Chica's Magic Rainbow
+    if (settings["IL-1"] && vars.OffsetFrame == 44 && old.Frame != current.Frame)
+        return true;
+
+    // Foxy Fighters
+    if (settings["IL-2"] && vars.OffsetFrame == 35 && old.Frame != current.Frame)
+        return true;
+
+    // Foxy.EXE
+    if (settings["IL-3"] && vars.OffsetFrame == 41 && old.Frame != current.Frame)
+        return true;
+
+    // Freddy in Space
+    if (settings["IL-4"] && vars.OffsetFrame == 38 && old.Frame != current.Frame)
+        return true;
+
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
     return vars.OffsetFrame == 27 && old.Frame != current.Frame;
 }
@@ -66,11 +91,21 @@ update
         return;
 
     vars.Uhara.Update();
+    vars.OffsetFrame = current.Frame + vars.FrameOffset;
+
+    timer.Run.Metadata.SetCustomVariable("OffsetFrame", vars.OffsetFrame.ToString());
+    timer.Run.Metadata.SetCustomVariable("VictoryStage", current.VictoryStage.ToString());
+    timer.Run.Metadata.SetCustomVariable("VictorySpeed", current.VictorySpeed.ToString());
+    timer.Run.Metadata.SetCustomVariable("VictoryCount", current.VictoryCount.ToString());
 
     if (current.Frame == old.Frame)
+    {
+        if (vars.OffsetFrame == 5 && current.VictoryStage >= 2 && !vars.Instance.WatcherExists("VictorySpeed") && current.VictoryCount > 0)
+            vars.Instance.WatchMovementSpeed("VictorySpeed", "victory");
+            
         return;
+    }
     
-    vars.OffsetFrame = current.Frame + vars.FrameOffset;
     int oldOffsetFrame = old.Frame + vars.FrameOffset;
 
     // Create Dialogue watcher
@@ -96,6 +131,63 @@ update
         vars.Instance.WatchCounter("FoundNewCharacter", "found new");
     else if (old.inMinigame)
         vars.Instance.RemoveOldWatcher("FoundNewCharacter");
+
+    // Create Battle watchers
+    if (vars.OffsetFrame == 5)
+    {
+        vars.Instance.WatchObjectCount("VictoryCount", "victory");
+        vars.Instance.WatchCounter("VictoryStage", "victory stage");
+        vars.Instance.WatchCounter("Boss", "boss");
+    }
+    else if (oldOffsetFrame == 5)
+    {
+        vars.Instance.RemoveOldWatcher("VictoryCount");
+        vars.Instance.RemoveOldWatcher("VictoryStage");
+        vars.Instance.RemoveOldWatcher("Boss");
+
+        vars.Instance.RemoveOldWatcher("VictorySpeed");
+        current.VictorySpeed = -1;
+    }
+
+    // ILs
+    if (settings["ILs"])
+    {
+        // Create Chica's Magic Rainbow WIN watcher
+        if (settings["IL-1"])
+        {
+            if (vars.OffsetFrame == 44)
+                vars.Instance.WatchCounter("CMRWin", "WIN");
+            else if (oldOffsetFrame == 44)
+                vars.Instance.RemoveOldWatcher("CMRWin");
+        }
+
+        // Create Foxy Fighters Souldozer HP watcher
+        if (settings["IL-2"])
+        {
+            if (vars.OffsetFrame == 35)
+                vars.Instance.WatchAlterableVariable("FFSouldozerHP", "souldozer", 0);
+            else if (oldOffsetFrame == 35)
+                vars.Instance.RemoveOldWatcher("FFSouldozerHP");
+        }
+
+        // Create Foxy.EXE Area watcher
+        if (settings["IL-3"])
+        {
+            if (vars.OffsetFrame == 41)
+                vars.Instance.WatchCounter("EXEArea", "area");
+            else if (oldOffsetFrame == 41)
+                vars.Instance.RemoveOldWatcher("EXEArea");
+        }
+
+        // Create Freddy in Space Scott HP watcher
+        if (settings["IL-4"])
+        {
+            if (vars.OffsetFrame == 38)
+                vars.Instance.WatchAlterableVariable("FISScottHP", "Active 14", 0);
+            else if (oldOffsetFrame == 38)
+                vars.Instance.RemoveOldWatcher("FISScottHP");
+        }
+    }
 }
 
 split
@@ -103,16 +195,31 @@ split
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
 
     // Normal Mode Ending
-    if (settings["Normal"] && vars.OffsetFrame == 20 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
-        return true;
+    if (settings["Normal"])
+    {
+        if (!settings["Normal-Instant"] && vars.OffsetFrame == 20 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
+            return true;
+        else if (settings["Normal-Instant"] && vars.OffsetFrame == 5 && current.Boss == 14 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+            return true;
+    }
 
     // Hard Mode Ending
-    if (settings["Hard"] && vars.OffsetFrame == 21 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
-        return true;
+    if (settings["Hard"])
+    {
+        if (!settings["Hard-Instant"] && vars.OffsetFrame == 21 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
+            return true;
+        else if (settings["Hard-Instant"] && vars.OffsetFrame == 5 && current.Boss == 10 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+            return true;
+    }
 
     // Chipper Ending
-    if (settings["Chip"] && vars.OffsetFrame == 22 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
-        return true;
+    if (settings["Chip"])
+    {
+        if (!settings["Chip-Instant"] && vars.OffsetFrame == 22 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
+            return true;
+        else if (settings["Chip-Instant"] && vars.OffsetFrame == 5 && current.Boss == 15 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+            return true;
+    }
 
     // Lost Ending
     if (settings["Fourth"] && vars.OffsetFrame == 15)
@@ -124,7 +231,7 @@ split
     }
 
     // Clock Ending
-    if (settings["Clock"] && vars.OffsetFrame == 21 && old.Frame != current.Frame)
+    if (settings["Clock"] && vars.OffsetFrame == 29 && old.Frame != current.Frame)
         return true;
 
     // Universe Ending
@@ -138,6 +245,26 @@ split
     // New Character Split
     if (settings["Chars"] && vars.OffsetFrame == 43 && old.Frame != current.Frame)
         return settings["Char-" + (current.FoundNewCharacter - 40).ToString()];
+
+    // ILs
+    if (settings["ILs"])
+    {
+        // Chica's Magic Rainbow
+        if (settings["IL-1"] && vars.OffsetFrame == 44 && current.CMRWin == 1 && old.CMRWin != current.CMRWin)
+            return true;
+
+        // Foxy Fighters
+        if (settings["IL-2"] && vars.OffsetFrame == 35 && current.FFSouldozerHP < -2000 && old.FFSouldozerHP > -2000)
+            return true;
+
+        // Foxy.EXE
+        if (settings["IL-3"] && vars.OffsetFrame == 41 && current.EXEArea == 4 && old.EXEArea != current.EXEArea)
+            return true;
+
+        // Freddy in Space
+        if (settings["IL-4"] && vars.OffsetFrame == 38 && current.FISScottHP < -1000 && old.FISScottHP > -1000)
+            return true;
+    }
 }
 
 isLoading
