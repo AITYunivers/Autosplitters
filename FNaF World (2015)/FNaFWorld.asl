@@ -4,7 +4,6 @@ state("fnaf-world"){} // Gamejolt
 startup
 {
     Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
-    //vars.Uhara.EnableDebug();
 
     settings.Add("Normal",   false, "Normal Mode Ending");
         settings.Add("Normal-Instant", false, "Split when the Victory screen stops moving (Hard Mode Categories)", "Normal");
@@ -65,21 +64,24 @@ init
 
 start 
 {  
-    // Chica's Magic Rainbow
-    if (settings["IL-1"] && vars.OffsetFrame == 44 && old.Frame != current.Frame)
-        return true;
+    if (settings["ILS"])
+    {
+        // Chica's Magic Rainbow
+        if (settings["IL-1"] && vars.OffsetFrame == 44 && old.Frame != current.Frame)
+            return true;
 
-    // Foxy Fighters
-    if (settings["IL-2"] && vars.OffsetFrame == 35 && old.Frame != current.Frame)
-        return true;
+        // Foxy Fighters
+        if (settings["IL-2"] && vars.OffsetFrame == 35 && old.Frame != current.Frame)
+            return true;
 
-    // Foxy.EXE
-    if (settings["IL-3"] && vars.OffsetFrame == 41 && old.Frame != current.Frame)
-        return true;
+        // Foxy.EXE
+        if (settings["IL-3"] && vars.OffsetFrame == 41 && old.Frame != current.Frame)
+            return true;
 
-    // Freddy in Space
-    if (settings["IL-4"] && vars.OffsetFrame == 38 && old.Frame != current.Frame)
-        return true;
+        // Freddy in Space
+        if (settings["IL-4"] && vars.OffsetFrame == 38 && old.Frame != current.Frame)
+            return true;
+    }
 
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
     return vars.OffsetFrame == 27 && old.Frame != current.Frame;
@@ -93,11 +95,7 @@ update
     vars.Uhara.Update();
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
 
-    timer.Run.Metadata.SetCustomVariable("OffsetFrame", vars.OffsetFrame.ToString());
-    timer.Run.Metadata.SetCustomVariable("VictoryStage", current.VictoryStage.ToString());
-    timer.Run.Metadata.SetCustomVariable("VictorySpeed", current.VictorySpeed.ToString());
-    timer.Run.Metadata.SetCustomVariable("VictoryCount", current.VictoryCount.ToString());
-
+    // Watch victory speed to check if it stops
     if (current.Frame == old.Frame)
     {
         if (vars.OffsetFrame == 5 && current.VictoryStage >= 2 && !vars.Instance.WatcherExists("VictorySpeed") && current.VictoryCount > 0)
@@ -254,7 +252,7 @@ split
             return true;
 
         // Foxy Fighters
-        if (settings["IL-2"] && vars.OffsetFrame == 35 && current.FFSouldozerHP < -2000 && old.FFSouldozerHP > -2000)
+        if (settings["IL-2"] && vars.OffsetFrame == 35 && current.FFSouldozerHP < -2000 && old.FFSouldozerHP >= -2000)
             return true;
 
         // Foxy.EXE
@@ -262,7 +260,7 @@ split
             return true;
 
         // Freddy in Space
-        if (settings["IL-4"] && vars.OffsetFrame == 38 && current.FISScottHP < -1000 && old.FISScottHP > -1000)
+        if (settings["IL-4"] && vars.OffsetFrame == 38 && current.FISScottHP < -1000 && old.FISScottHP >= -1000)
             return true;
     }
 }
