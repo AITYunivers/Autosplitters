@@ -9,7 +9,8 @@
         "BCC Ending": 32,
         "TitleBtnClicked": "Active 14",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jr-s-v1-1-1":
     {
@@ -21,7 +22,8 @@
         "BCC Ending": 31,
         "TitleBtnClicked": "Active 14",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jr-s-v1-2-2":
     {
@@ -33,7 +35,8 @@
         "BCC Ending": 31,
         "TitleBtnClicked": "Active 14",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jr-s-v1-2-3":
     {
@@ -45,7 +48,8 @@
         "BCC Ending": 31,
         "TitleBtnClicked": "Active 14",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jr-s-v1-3-0":
     {
@@ -57,7 +61,8 @@
         "BCC Ending": 31,
         "TitleBtnClicked": "MECHLUS",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jr-s-v1-3-1":
     {
@@ -69,7 +74,8 @@
         "BCC Ending": 31,
         "TitleBtnClicked": "MECHLUS",
         "FailedToEraseSave": "Active 2",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 656836
     },
     "jrs-v1.4.0":
     {
@@ -81,7 +87,8 @@
         "BCC Ending": 30,
         "TitleBtnClicked": "Fade 2",
         "FailedToEraseSave": "Continue",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 669132
     },
     "jrs-v1.4.1":
     {
@@ -93,7 +100,8 @@
         "BCC Ending": 30,
         "TitleBtnClicked": "Fade 2",
         "FailedToEraseSave": "Continue",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 669132
     },
     "jrs-141":
     {
@@ -105,6 +113,7 @@
         "BCC Ending": 30,
         "TitleBtnClicked": "Fade 2",
         "FailedToEraseSave": "Continue",
-        "CarrotEnding": "Active 23"
+        "CarrotEnding": "Active 23",
+        "MVPointer": 644556
     }
 }

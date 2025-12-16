@@ -53,15 +53,17 @@ startup
 
 init
 {
-    vars.Instance = vars.Uhara.CreateTool("ClickteamFusion", "Instance");
     vars.VersionMappings = vars.JsonNodeParse.Invoke(null, new object[]
     {
         File.ReadAllText("Components/JRsVersionMappings.json"),
-        //File.ReadAllText("E:\\Autosplitters\\JR's (2022)\\JRsVersionMappings.json"),
+        //File.ReadAllText("F:\\Autosplitters\\JR's (2022)\\JRsVersionMappings.json"),
         null,
         vars.DefaultDocOptions
     });
     vars.VersionMappings = vars.VersionMappings[game.ProcessName];
+    
+    vars.Instance = vars.Uhara.CreateTool("ClickteamFusion", "Instance");
+    vars.Instance.Initialize(vars.VersionMappings["MVPointer"].GetValue<int>());
 }
 
 update
