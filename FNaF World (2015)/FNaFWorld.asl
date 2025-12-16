@@ -48,7 +48,9 @@ startup
 
 init
 {
+    // Initialize Uhara Instance
     vars.Instance = vars.Uhara.CreateTool("ClickteamFusion", "Instance");
+    vars.Instance.Initialize(0xAC9AC);
 
     // Compatibility for older versions without the warning frame
     vars.FrameOffset = current.FrameCount == 31 ? 1 : 0;
@@ -64,7 +66,7 @@ init
 
 start 
 {  
-    if (settings["ILS"])
+    if (settings["ILs"])
     {
         // Chica's Magic Rainbow
         if (settings["IL-1"] && vars.OffsetFrame == 44 && old.Frame != current.Frame)
