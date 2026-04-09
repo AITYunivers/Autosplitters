@@ -77,7 +77,7 @@ start
             return true;
 
         // Foxy.EXE
-        if (settings["IL-3"] && vars.OffsetFrame == 41 && old.Frame != current.Frame)
+        if (settings["IL-3"] && vars.OffsetFrame == 40 && old.Frame != current.Frame)
             return true;
 
         // Freddy in Space
