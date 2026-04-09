@@ -97,11 +97,21 @@ update
     vars.Uhara.Update();
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
 
+    // Some kind of memory corruption happens between now and split being called
+    // This is the workaround for now until I can fix it
+    vars.VictorySpeedCur = current.VictorySpeed;
+    vars.VictorySpeedOld = old.VictorySpeed;
+    
     // Watch victory speed to check if it stops
     if (current.Frame == old.Frame)
     {
         if (vars.OffsetFrame == 5 && current.VictoryStage >= 2 && !vars.Instance.WatcherExists("VictorySpeed") && current.VictoryCount > 0)
             vars.Instance.WatchMovementSpeed("VictorySpeed", "victory");
+        else if (vars.OffsetFrame == 5 && vars.Instance.WatcherExists("VictorySpeed") && (current.VictoryStage < 2 || current.VictoryCount == 0))
+        {
+            vars.Instance.RemoveOldWatcher("VictorySpeed");
+            current.VictorySpeed = -1;
+        }
             
         return;
     }
@@ -199,7 +209,7 @@ split
     {
         if (!settings["Normal-Instant"] && vars.OffsetFrame == 20 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
             return true;
-        else if (settings["Normal-Instant"] && vars.OffsetFrame == 5 && current.Boss == 14 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+        else if (settings["Normal-Instant"] && vars.OffsetFrame == 5 && current.Boss == 14 && current.VictoryCount > 0 && vars.VictorySpeedCur == 0 && vars.VictorySpeedOld != vars.VictorySpeedCur)
             return true;
     }
 
@@ -208,7 +218,7 @@ split
     {
         if (!settings["Hard-Instant"] && vars.OffsetFrame == 21 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
             return true;
-        else if (settings["Hard-Instant"] && vars.OffsetFrame == 5 && current.Boss == 10 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+        else if (settings["Hard-Instant"] && vars.OffsetFrame == 5 && current.Boss == 10 && current.VictoryCount > 0 && vars.VictorySpeedCur == 0 && vars.VictorySpeedOld != vars.VictorySpeedCur)
             return true;
     }
 
@@ -217,7 +227,7 @@ split
     {
         if (!settings["Chip-Instant"] && vars.OffsetFrame == 22 && current.Dialogue == 7 && old.Dialogue != current.Dialogue)
             return true;
-        else if (settings["Chip-Instant"] && vars.OffsetFrame == 5 && current.Boss == 15 && current.VictorySpeed == 0 && old.VictorySpeed != current.VictorySpeed)
+        else if (settings["Chip-Instant"] && vars.OffsetFrame == 5 && current.Boss == 15 && current.VictoryCount > 0 && vars.VictorySpeedCur == 0 && vars.VictorySpeedOld != vars.VictorySpeedCur)
             return true;
     }
 
