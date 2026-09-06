@@ -27,6 +27,7 @@ startup
         settings.Add("Char-8",  true, "Purple Guy", "Chars");
     settings.Add("ILs", true, "Specific timings for Individual Levels");
         settings.Add("IL-1",  false, "Chica's Magic Rainbow", "ILs");
+            settings.Add("CMR-Splits",  false, "Split on checkpoints (Ignores the first)", "IL-1");
         settings.Add("IL-2",  false, "Foxy Fighters", "ILs");
         settings.Add("IL-3",  false, "Foxy.EXE", "ILs");
         settings.Add("IL-4",  false, "Freddy in Space", "ILs");
@@ -62,6 +63,11 @@ init
     current.VictoryStage = 0;
     current.VictoryCount = 0;
     current.inMinigame = false;
+
+    vars.CMRCheckpoints = new int[7]
+    {
+        1851, 2801, 3801, 4801, 5851, 7001, 8201
+    };
 }
 
 start 
@@ -87,6 +93,11 @@ start
 
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
     return vars.OffsetFrame == 27 && old.Frame != current.Frame;
+}
+
+onStart
+{
+    vars.CMRNextCheckpoint = 0;
 }
 
 update
@@ -166,9 +177,21 @@ update
         if (settings["IL-1"])
         {
             if (vars.OffsetFrame == 44)
+            {
                 vars.Instance.WatchCounter("CMRWin", "WIN");
+                if (settings["CMR-Splits"])
+                {
+                    vars.Instance.WatchPositionX("CMRPos", "Active");
+                }
+            }
             else if (oldOffsetFrame == 44)
+            {
                 vars.Instance.RemoveOldWatcher("CMRWin");
+                if (settings["CMR-Splits"])
+                {
+                    vars.Instance.RemoveOldWatcher("CMRPos");
+                }
+            }
         }
 
         // Create Foxy Fighters Souldozer HP watcher
@@ -260,8 +283,17 @@ split
     if (settings["ILs"])
     {
         // Chica's Magic Rainbow
-        if (settings["IL-1"] && vars.OffsetFrame == 44 && current.CMRWin == 1 && old.CMRWin != current.CMRWin)
-            return true;
+        if (settings["IL-1"] && vars.OffsetFrame == 44)
+        {
+            if (settings["CMR-Splits"] && vars.CMRNextCheckpoint < vars.CMRCheckpoints.Length && current.CMRPos >= vars.CMRCheckpoints[vars.CMRNextCheckpoint])
+            {
+                vars.CMRNextCheckpoint++;
+                return true;
+            }
+
+            if (current.CMRWin == 1 && old.CMRWin != current.CMRWin)
+                return true;
+        }
 
         // Foxy Fighters
         if (settings["IL-2"] && vars.OffsetFrame == 35 && current.FFSouldozerHP < -2000 && old.FFSouldozerHP >= -2000)
