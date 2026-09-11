@@ -31,6 +31,8 @@ startup
         settings.Add("IL-2",  false, "Foxy Fighters", "ILs");
         settings.Add("IL-3",  false, "Foxy.EXE", "ILs");
         settings.Add("IL-4",  false, "Freddy in Space", "ILs");
+        
+    refreshRate = 60;
 
     if (timer.CurrentTimingMethod == TimingMethod.RealTime)
     {        
