@@ -16,21 +16,25 @@ startup
     settings.Add("Clock",    false, "Clock Ending");
     settings.Add("Universe", false, "Universe Ending");
     settings.Add("Rainbow",  false, "Rainbow Ending");
+    
     settings.Add("Chars",    false, "Split At New Character Screen After Minigames");
-        settings.Add("Char-1",  true, "Jack-O-Bonnie", "Chars");
-        settings.Add("Char-2",  true, "Jack-O-Chica", "Chars");
-        settings.Add("Char-3",  true, "Animdude", "Chars");
-        settings.Add("Char-4",  true, "Chipper", "Chars");
-        settings.Add("Char-5",  true, "Nightmare Balloon Boy", "Chars");
-        settings.Add("Char-6",  true, "Nightmarionne", "Chars");
-        settings.Add("Char-7",  true, "Coffee", "Chars");
-        settings.Add("Char-8",  true, "Purple Guy", "Chars");
+        settings.Add("Char-1", true, "Jack-O-Bonnie", "Chars");
+        settings.Add("Char-2", true, "Jack-O-Chica", "Chars");
+        settings.Add("Char-3", true, "Animdude", "Chars");
+        settings.Add("Char-4", true, "Chipper", "Chars");
+        settings.Add("Char-5", true, "Nightmare Balloon Boy", "Chars");
+        settings.Add("Char-6", true, "Nightmarionne", "Chars");
+        settings.Add("Char-7", true, "Coffee", "Chars");
+        settings.Add("Char-8", true, "Purple Guy", "Chars");
+
     settings.Add("ILs", true, "Specific timings for Individual Levels");
-        settings.Add("IL-1",  false, "Chica's Magic Rainbow", "ILs");
-            settings.Add("CMR-Splits",  false, "Split on checkpoints (Ignores the first)", "IL-1");
-        settings.Add("IL-2",  false, "Foxy Fighters", "ILs");
-        settings.Add("IL-3",  false, "Foxy.EXE", "ILs");
-        settings.Add("IL-4",  false, "Freddy in Space", "ILs");
+        settings.Add("IL-1", false, "Chica's Magic Rainbow", "ILs");
+            settings.Add("CMR-Splits", false, "Split on checkpoints (Ignores the first)", "IL-1");
+        settings.Add("IL-2", false, "Foxy Fighters", "ILs");
+        settings.Add("IL-3", false, "Foxy.EXE", "ILs");
+        settings.Add("IL-4", false, "Freddy in Space", "ILs");
+
+    settings.Add("RefreshX2", false, "Double Autosplitter Refresh Rate from 60tps to 120tps");
         
     refreshRate = 60;
 
@@ -100,6 +104,11 @@ start
 onStart
 {
     vars.CMRNextCheckpoint = 0;
+
+    if (settings["RefreshX2"])
+        refreshRate = 120;
+    else
+        refreshRate = 60;
 }
 
 update
