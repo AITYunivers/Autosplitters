@@ -11,10 +11,16 @@ startup
         settings.Add("Start-Office",    false, "Start Timer when the office appears (For Death%)", "Starts");
 
     settings.Add("Splits", true, "Define what split behaviors you'd like");
-        settings.Add("Split-Night",        true, "Split at 6AM at the end of nights",                                           "Splits");
-        settings.Add("Split-Transitions", false, "Split at the ends of both the 6AM and the Night X screens",                   "Splits");
-        settings.Add("Split-Fades",       false, "Split at the starts and ends of all fades (Will not collide with the above)", "Splits");
-        settings.Add("Split-Death",       false, "Split when the static appears on death (For Death%)",                         "Splits");
+        settings.Add("Split-Night",        true, "Split at 6AM at the end of nights",                                                "Splits");
+        settings.Add("Split-Transitions", false, "Split at the ends of both the 6AM and the Night X screens",                        "Splits");
+        settings.Add("Split-Fades",       false, "Split at the starts and ends of selected fades (Will not collide with the above)", "Splits");
+            settings.Add("Split-FadeIn-Start",   false, "Split at the start of the Fade In from the Office to the 6AM screen",              "Split-Fades");
+            settings.Add("Split-FadeIn-End",     false, "Split at the end of the Fade In from the Office to the 6AM screen",                "Split-Fades");
+            settings.Add("Split-FadeOut1-Start", false, "Split at the start of the Fade Out from the 6AM screen to the Night X screen",     "Split-Fades");
+            settings.Add("Split-FadeOut1-End",   false, "Split at the end of the Fade Out from the 6AM screen to the Night X screen",       "Split-Fades");
+            settings.Add("Split-FadeOut2-Start", false, "Split at the start of the Fade Out from the Night X screen to the loading screen", "Split-Fades");
+            settings.Add("Split-FadeOut2-End",   false, "Split at the end of the Fade Out from the Night X screen to the loading screen",   "Split-Fades");
+        settings.Add("Split-Death",       false, "Split when the static appears on death (For Death%)",                              "Splits");
 
     settings.Add("Resets", true, "Define what reset behaviors you'd like");
         settings.Add("Reset-F2",    true, "Reset Timer on F2",    "Resets");
@@ -182,42 +188,48 @@ split
         if (!settings["Split-Night"])
         {
             // Start Fade In on 6AM screen
-            if (vars.OffsetFrame == 6 && current.AppRunningState == 2 && uniqueState)
+            if (settings["Split-FadeIn-Start"] && vars.OffsetFrame == 6 && current.AppRunningState == 2 && uniqueState)
                 return true;
         }
 
         // Start Fade Out on 6AM screen
-        if (vars.OffsetFrame == 6 && current.AppRunningState == 4 && uniqueState)
+        if (settings["Split-FadeOut1-Start"] && vars.OffsetFrame == 6 && current.AppRunningState == 4 && uniqueState)
         {
             vars.StartedFade1 = true;
             return true;
         }
 
         // Start Fade Out on Night X screen
-        if (vars.OffsetFrame == 2 && current.AppRunningState == 4 && uniqueState)
+        if (settings["Split-FadeOut2-Start"] && vars.OffsetFrame == 2 && current.AppRunningState == 4 && uniqueState)
         {
             vars.StartedFade2 = true;
             return true;
         }
 
         // End Fade In on 6AM screen
-        if (vars.OffsetFrame == 6 && old.AppRunningState == 2 && uniqueState)
+        if (settings["Split-FadeIn-End"] && vars.OffsetFrame == 6 && old.AppRunningState == 2 && uniqueState)
             return true;
 
         // Don't run the ones that would collide with the Transitions splits, essentially being the exact same
         if (!settings["Split-Transitions"])
         {
             // End Fade Out on 6AM screen
-            if (vars.OffsetFrame == 6 && old.AppRunningState == 4 && uniqueState)
-                return true;
-            else if (vars.OffsetFrame != 6 && oldOffsetFrame == 6 && vars.StartedFade1)
-                return true;
+            if (settings["Split-FadeOut1-End"])
+            {
+                if (vars.OffsetFrame == 6 && old.AppRunningState == 4 && uniqueState)
+                    return true;
+                else if (vars.OffsetFrame != 6 && oldOffsetFrame == 6 && vars.StartedFade1)
+                    return true;
+            }
 
             // End Fade Out on Night X screen
-            if (vars.OffsetFrame == 2 && old.AppRunningState == 4 && uniqueState)
-                return true;
-            else if (vars.OffsetFrame != 2 && oldOffsetFrame == 2 && vars.StartedFade2)
-                return true;
+            if (settings["Split-FadeOut2-End"])
+            {
+                if (vars.OffsetFrame == 2 && old.AppRunningState == 4 && uniqueState)
+                    return true;
+                else if (vars.OffsetFrame != 2 && oldOffsetFrame == 2 && vars.StartedFade2)
+                    return true;
+            }
         }
     }
 
