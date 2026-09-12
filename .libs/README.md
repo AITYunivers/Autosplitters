@@ -35,6 +35,7 @@ Source Code: https://github.com/AITYunivers/uharaClickteamBeta
 - [WatcherExists](#watcherexists)
 - [RemoveOldWatcher](#removeoldwatcher)
 - [ClearWatchers](#clearwatchers)
+- [Popup](#popup)
 
 ### WatchGlobalVariable
 
@@ -402,3 +403,11 @@ This is highly recommended for when old watcher variables or unavailable, or no 
 public void ClearWatchers()
 ```
 Clears all pre-existing watchers that are being updated by Uhara.
+
+### Popup
+
+```cs
+public DialogResult Popup(string text, string caption)
+```
+Gives a popup to the user, linked to the Clickteam application<br/>
+Similar to MessageBox.Show, except it'll show even if LiveSplit isn't in focus
