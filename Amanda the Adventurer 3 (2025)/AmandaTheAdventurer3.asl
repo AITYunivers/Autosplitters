@@ -8,6 +8,8 @@ startup
 	vars.Helper.LoadSceneManager = true;
 	vars.Helper.AlertLoadless();
 
+    settings.Add("Version", true, "== Autosplitter Version 2 ==");
+    
 	dynamic[,] _settings =
 	{
 		{ "StartingSplits", true, "Starting Splits", null, "The timer will automatically start depending on these settings"},
