@@ -5,17 +5,20 @@ startup
 {
     Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
 
-    settings.Add("Normal",   false, "Normal Mode Ending");
-        settings.Add("Normal-Instant", false, "Split when the Victory screen stops moving (Hard Mode Categories)", "Normal");
-    settings.Add("Hard",     false, "Hard Mode Ending");
-        settings.Add("Hard-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)", "Hard");
-    settings.Add("Fourth",   false, "Fourth Glitch Ending");
-        settings.Add("Fourth-Instant", false, "Split as soon as you enter the Fourth Glitch (100% / 157%)", "Fourth");
-    settings.Add("Chip",     false, "Chipper Ending");
-        settings.Add("Chip-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)", "Chip");
-    settings.Add("Clock",    false, "Clock Ending");
-    settings.Add("Universe", false, "Universe Ending");
-    settings.Add("Rainbow",  false, "Rainbow Ending");
+    settings.Add("Version", true, "== Autosplitter Version 14 ==");
+    
+    settings.Add("Endings", true, "Splits specific to endings");
+        settings.Add("Normal",   false, "Normal Mode Ending",   "Endings");
+            settings.Add("Normal-Instant", false, "Split when the Victory screen stops moving (Hard Mode Categories)",  "Normal");
+        settings.Add("Hard",     false, "Hard Mode Ending",     "Endings");
+            settings.Add("Hard-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)",           "Hard");
+        settings.Add("Fourth",   false, "Fourth Glitch Ending", "Endings");
+            settings.Add("Fourth-Instant", false, "Split as soon as you enter the Fourth Glitch (100% / 157%)",         "Fourth");
+        settings.Add("Chip",     false, "Chipper Ending",       "Endings");
+            settings.Add("Chip-Instant",   false, "Split when the Victory screen stops moving (100% / 157%)",           "Chip");
+        settings.Add("Clock",    false, "Clock Ending",         "Endings");
+        settings.Add("Universe", false, "Universe Ending",      "Endings");
+        settings.Add("Rainbow",  false, "Rainbow Ending",       "Endings");
     
     settings.Add("Chars",    false, "Split At New Character Screen After Minigames");
         settings.Add("Char-1", true, "Jack-O-Bonnie", "Chars");
@@ -124,61 +127,79 @@ update
     vars.VictorySpeedCur = current.VictorySpeed;
     vars.VictorySpeedOld = old.VictorySpeed;
     
-    // Watch victory speed to check if it stops
     if (current.Frame == old.Frame)
     {
-        if (vars.OffsetFrame == 5 && current.VictoryStage >= 2 && !vars.Instance.WatcherExists("VictorySpeed") && current.VictoryCount > 0)
-            vars.Instance.WatchMovementSpeed("VictorySpeed", "victory");
-        else if (vars.OffsetFrame == 5 && vars.Instance.WatcherExists("VictorySpeed") && (current.VictoryStage < 2 || current.VictoryCount == 0))
+        // Watch victory speed to check if it stops
+        if (settings["Normal-Instant"] || settings["Hard-Instant"] || settings["Chip-Instant"])
         {
-            vars.Instance.RemoveOldWatcher("VictorySpeed");
-            current.VictorySpeed = -1;
+            if (vars.OffsetFrame == 5 && current.VictoryStage >= 2 && !vars.Instance.WatcherExists("VictorySpeed") && current.VictoryCount > 0)
+                vars.Instance.WatchMovementSpeed("VictorySpeed", "victory");
+            else if (vars.OffsetFrame == 5 && vars.Instance.WatcherExists("VictorySpeed") && (current.VictoryStage < 2 || current.VictoryCount == 0))
+            {
+                vars.Instance.RemoveOldWatcher("VictorySpeed");
+                current.VictorySpeed = -1;
+            }
         }
-            
+        
         return;
     }
     
     int oldOffsetFrame = old.Frame + vars.FrameOffset;
 
-    // Create Dialogue watcher
-    if (vars.OffsetFrame >= 20 && vars.OffsetFrame <= 22)
-        vars.Instance.WatchCounter("Dialogue", "text");
-    else if (oldOffsetFrame >= 20 && oldOffsetFrame <= 22)
-        vars.Instance.RemoveOldWatcher("Dialogue");
-
-    // Create Lost Dialogue watcher
-    if (vars.OffsetFrame == 15)
-        vars.Instance.WatchCounter("LostDialogue", "chat");
-    else if (oldOffsetFrame == 15)
-        vars.Instance.RemoveOldWatcher("LostDialogue");
-
-    // Create Found New Character watcher
-    current.inMinigame = 
-        vars.OffsetFrame == 35 ||   // Foxy Fighters
-        vars.OffsetFrame == 38 ||   // Freddy in Space
-        vars.OffsetFrame == 41 ||   // Foxy.EXE
-        vars.OffsetFrame == 44;     // Chica's Magic Rainbow
-
-    if (current.inMinigame)
-        vars.Instance.WatchCounter("FoundNewCharacter", "found new");
-    else if (old.inMinigame)
-        vars.Instance.RemoveOldWatcher("FoundNewCharacter");
-
-    // Create Battle watchers
-    if (vars.OffsetFrame == 5)
+    if (settings["Endings"])
     {
-        vars.Instance.WatchObjectCount("VictoryCount", "victory");
-        vars.Instance.WatchCounter("VictoryStage", "victory stage");
-        vars.Instance.WatchCounter("Boss", "boss");
+        if (settings["Normal"] && !settings["Normal-Instant"] || settings["Hard"] && !settings["Hard-Instant"] || settings["Chip"] && !settings["Chip-Instant"])
+        {
+            // Create Dialogue watcher
+            if (vars.OffsetFrame >= 20 && vars.OffsetFrame <= 22)
+                vars.Instance.WatchCounter("Dialogue", "text");
+            else if (oldOffsetFrame >= 20 && oldOffsetFrame <= 22)
+                vars.Instance.RemoveOldWatcher("Dialogue");
+        }
+
+        if (settings["Fourth"] && !settings["Fourth-Instant"])
+        {
+            // Create Lost Dialogue watcher
+            if (vars.OffsetFrame == 15)
+                vars.Instance.WatchCounter("LostDialogue", "chat");
+            else if (oldOffsetFrame == 15)
+                vars.Instance.RemoveOldWatcher("LostDialogue");
+        }
+
+        if (settings["Normal-Instant"] || settings["Hard-Instant"] || settings["Chip-Instant"])
+        {
+            // Create Battle watchers
+            if (vars.OffsetFrame == 5)
+            {
+                vars.Instance.WatchObjectCount("VictoryCount", "victory");
+                vars.Instance.WatchCounter("VictoryStage", "victory stage");
+                vars.Instance.WatchCounter("Boss", "boss");
+            }
+            else if (oldOffsetFrame == 5)
+            {
+                vars.Instance.RemoveOldWatcher("VictoryCount");
+                vars.Instance.RemoveOldWatcher("VictoryStage");
+                vars.Instance.RemoveOldWatcher("Boss");
+
+                vars.Instance.RemoveOldWatcher("VictorySpeed");
+                current.VictorySpeed = -1;
+            }
+        }
     }
-    else if (oldOffsetFrame == 5)
-    {
-        vars.Instance.RemoveOldWatcher("VictoryCount");
-        vars.Instance.RemoveOldWatcher("VictoryStage");
-        vars.Instance.RemoveOldWatcher("Boss");
 
-        vars.Instance.RemoveOldWatcher("VictorySpeed");
-        current.VictorySpeed = -1;
+    if (settings["Chars"])
+    {
+        // Create Found New Character watcher
+        current.inMinigame = 
+            vars.OffsetFrame == 35 ||   // Foxy Fighters
+            vars.OffsetFrame == 38 ||   // Freddy in Space
+            vars.OffsetFrame == 41 ||   // Foxy.EXE
+            vars.OffsetFrame == 44;     // Chica's Magic Rainbow
+
+        if (current.inMinigame)
+            vars.Instance.WatchCounter("FoundNewCharacter", "found new");
+        else if (old.inMinigame)
+            vars.Instance.RemoveOldWatcher("FoundNewCharacter");
     }
 
     // ILs
