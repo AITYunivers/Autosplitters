@@ -5,7 +5,7 @@ startup
 {
     Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
 
-    settings.Add("Version", false, "== Autosplitter Version 3 ==");
+    settings.Add("Version", true, "== Autosplitter Version 3 ==");
     
     settings.Add("Starts", true, "Define what start behaviors you'd like");
         settings.Add("Start-Newspaper",  true, "Start Timer when the newpaper starts to fade in",  "Starts");
