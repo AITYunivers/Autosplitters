@@ -14,25 +14,7 @@ startup
     //vars.Uhara.EnableDebug();
     vars.Mechlus = false;
 
-    vars.JsonAssembly = Assembly.Load(File.ReadAllBytes("System.Text.Json.dll"));
-    vars.JsonNodeType = vars.JsonAssembly.GetType("System.Text.Json.Nodes.JsonNode");
-
-    MethodInfo[] methods = ((Type)vars.JsonNodeType).GetMethods(
-    BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-
-    vars.JsonNodeParse = methods.First(m =>
-    {
-        if (m.Name != "Parse")
-            return false;
-
-        var p = m.GetParameters();
-        return p.Length == 3
-            && p[0].ParameterType == typeof(string)
-            && p[2].ParameterType.Name == "JsonDocumentOptions";
-    });
-
-    Type jsonDocumentOptionsType = vars.JsonAssembly.GetType("System.Text.Json.JsonDocumentOptions");
-    vars.DefaultDocOptions = Activator.CreateInstance(jsonDocumentOptionsType);
+    settings.Add("Version", true, "== Autosplitter Version 3 ==");
 
     refreshRate = 60;
 
@@ -53,14 +35,13 @@ startup
 
 init
 {
-    vars.VersionMappings = vars.JsonNodeParse.Invoke(null, new object[]
-    {
-        File.ReadAllText("Components/JRsVersionMappings.json"),
-        //File.ReadAllText("F:\\Autosplitters\\JR's (2022)\\JRsVersionMappings.json"),
-        null,
-        vars.DefaultDocOptions
-    });
-    vars.VersionMappings = vars.VersionMappings[game.ProcessName];
+    JsonNode versionMappings = JsonNode.Parse(
+        File.ReadAllText("Components/JRsVersionMappings.json")
+        //File.ReadAllText("F:\\Autosplitters\\JR's (2022)\\JRsVersionMappings.json")
+    );
+    vars.VersionMappings = versionMappings[game.ProcessName];
+    if (vars.VersionMappings != null)
+        print("Loaded Version Mappings for " + game.ProcessName + "\n" + vars.VersionMappings.ToJsonString());
     
     vars.Instance = vars.Uhara.CreateTool("ClickteamFusion", "Instance");
     vars.Instance.Initialize(vars.VersionMappings["MVPointer"].GetValue<int>());
@@ -68,7 +49,7 @@ init
 
 update
 {
-    if (vars.Instance == null)
+    if (vars.Instance == null || vars.VersionMappings == null)
         return;
 
     vars.Uhara.Update();
@@ -102,6 +83,9 @@ update
 
 start
 {
+    if (vars.VersionMappings == null)
+        return false;
+
     // Split when pressing New Game from the Menu Screen
     if (!vars.Mechlus && current.Frame == vars.VersionMappings["Menu Screen"].GetValue<int>())
     {
@@ -145,6 +129,9 @@ start
 
 split
 {
+    if (vars.VersionMappings == null)
+        return false;
+
     // Split at 6AM on Nights 1-5
     if (current.Frame != old.Frame && current.Frame == vars.VersionMappings["6-AM"].GetValue<int>())
         return true;
