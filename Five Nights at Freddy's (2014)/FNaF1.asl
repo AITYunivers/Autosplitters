@@ -5,6 +5,8 @@ startup
 {
     Assembly.Load(File.ReadAllBytes("Components/uharaClickteamBeta")).CreateInstance("Main");
 
+    settings.Add("Version", false, "== Autosplitter Version 3 ==");
+    
     settings.Add("Starts", true, "Define what start behaviors you'd like");
         settings.Add("Start-Newspaper",  true, "Start Timer when the newpaper starts to fade in",  "Starts");
         settings.Add("Start-WhatNight",  true, "Start Timer when the Night X screen appears",      "Starts");
@@ -93,7 +95,7 @@ update
     // Compatibility for older versions without the warning frame
     vars.FrameOffset = current.FrameCount == 16 ? 1 : 0;
     vars.OffsetFrame = current.Frame + vars.FrameOffset;
-    
+
     if (current.Frame == old.Frame && vars.HasInit)
         return;
     
@@ -184,30 +186,35 @@ split
         int oldOffsetFrame = old.Frame + vars.FrameOffset;
         bool uniqueState = old.AppRunningState != current.AppRunningState;
 
+        bool fadeIn = current.AppRunningState == 1 || current.AppRunningState == 2;
+        bool oldFadeIn = (old.AppRunningState == 1 || old.AppRunningState == 2) && current.AppRunningState == 3;
+        bool fadeOut = current.AppRunningState == 4;
+        bool oldFadeOut = old.AppRunningState <= 3 && current.AppRunningState == 4;
+
         // Don't run the ones that would collide with the Night split, essentially being the exact same
         if (!settings["Split-Night"])
         {
             // Start Fade In on 6AM screen
-            if (settings["Split-FadeIn-Start"] && vars.OffsetFrame == 6 && current.AppRunningState == 2 && uniqueState)
+            if (settings["Split-FadeIn-Start"] && vars.OffsetFrame == 6 && fadeIn && uniqueState)
                 return true;
         }
 
         // Start Fade Out on 6AM screen
-        if (settings["Split-FadeOut1-Start"] && vars.OffsetFrame == 6 && current.AppRunningState == 4 && uniqueState)
+        if (settings["Split-FadeOut1-Start"] && vars.OffsetFrame == 6 && fadeOut && uniqueState)
         {
             vars.StartedFade1 = true;
             return true;
         }
 
         // Start Fade Out on Night X screen
-        if (settings["Split-FadeOut2-Start"] && vars.OffsetFrame == 2 && current.AppRunningState == 4 && uniqueState)
+        if (settings["Split-FadeOut2-Start"] && vars.OffsetFrame == 2 && fadeOut && uniqueState)
         {
             vars.StartedFade2 = true;
             return true;
         }
 
         // End Fade In on 6AM screen
-        if (settings["Split-FadeIn-End"] && vars.OffsetFrame == 6 && old.AppRunningState == 2 && uniqueState)
+        if (settings["Split-FadeIn-End"] && vars.OffsetFrame == 6 && oldFadeIn && uniqueState)
             return true;
 
         // Don't run the ones that would collide with the Transitions splits, essentially being the exact same
@@ -216,7 +223,7 @@ split
             // End Fade Out on 6AM screen
             if (settings["Split-FadeOut1-End"])
             {
-                if (vars.OffsetFrame == 6 && old.AppRunningState == 4 && uniqueState)
+                if (vars.OffsetFrame == 6 && oldFadeOut && uniqueState)
                     return true;
                 else if (vars.OffsetFrame != 6 && oldOffsetFrame == 6 && vars.StartedFade1)
                     return true;
@@ -225,7 +232,7 @@ split
             // End Fade Out on Night X screen
             if (settings["Split-FadeOut2-End"])
             {
-                if (vars.OffsetFrame == 2 && old.AppRunningState == 4 && uniqueState)
+                if (vars.OffsetFrame == 2 && oldFadeOut && uniqueState)
                     return true;
                 else if (vars.OffsetFrame != 2 && oldOffsetFrame == 2 && vars.StartedFade2)
                     return true;
