@@ -4,6 +4,9 @@ startup
 {
     // Load Uhara and setup settings
 	Assembly.Load(File.ReadAllBytes("Components/uhara9")).CreateInstance("Main");
+
+    settings.Add("Version", true, "== Autosplitter Version 6 ==");
+    
 	settings.Add("splitDays", true, "Split at the end each day");
 	settings.Add("iL", false, "Start at the beginning of a day (IL)");
 }
